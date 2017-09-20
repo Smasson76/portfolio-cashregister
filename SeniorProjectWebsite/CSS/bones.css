@@ -1,0 +1,35 @@
+body {
+  background-color: #EDBB99;
+  width: 90%;
+  margin: 20px;
+  margin-left: 275px;
+  text-align: center;
+  }
+
+h1{
+	text-align: center;
+	font-family: "Lucida Console", "Lucida Sans Typewriter", monaco, "Bitstream Vera Sans Mono", monospace;
+    font-weight: bold;
+    font-size: 30px;
+}
+
+h2 {
+	text-align: center;
+	font-family: "Lucida Console", "Lucida Sans Typewriter", monaco, "Bitstream Vera Sans Mono", monospace;
+    font-weight: bold;
+    font-size: 25px;
+}
+
+.wrapper {
+	width: 720px;
+	margin: auto 0px;
+	
+}
+.entry {
+	width: 220px;
+	float: left;
+	margin: 10px;
+	height: 188px;
+	background-color: #D4EFDF;
+	background repeat: no-repeat;
+	background-position: bottom;
