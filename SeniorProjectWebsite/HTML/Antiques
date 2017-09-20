@@ -1,0 +1,33 @@
+<html>
+<head> 
+	<title>Antiques</title>
+	<link href ="book.css" type="text/css" rel="stylesheet" />
+	</head> 
+	<body>
+	<div class="wrapper">
+	<h1>Antiques</h1>
+	<h2>Here is a selection of Antiques that will be available for purchase</h2>
+ <div class ="entry">
+ <figure><img src = "Images/atomizer.jpg" />
+ <figcaption>Atomizer</figcaption>
+ </figure>
+ </div>
+ <div class ="entry"> 
+  <figure><img src = "Images/instruments.jpg" />
+  <figcaption>Antique Catheters</figcaption>
+  </figure>
+  </div>
+   <div class ="entry"> 
+  <figure><img src = "Images/medical.jpg" />
+ <figcaption>Trachea tubes</figcaption>
+ </figure>
+ </div>
+ <div class="entry">
+ <figure> <img src = "Images/box.jpg"/>
+<figcaption>Antique Jewelry Box</figcaption>
+</figure>
+</div>
+  <h3><a href="SeniorProject.html">Home</a></h3>
+  </div>
+</body>	
+</html>
