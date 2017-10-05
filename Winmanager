@@ -1,0 +1,49 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public class WinManager : MonoBehaviour
+{
+	public float transitionTime;
+
+	public Transform Enemy; 
+	public Transform target;
+	public GameObject loseScreen;
+
+	public EventSystemChecker evt;
+
+	public PauseMenu pauseMenu;
+	public float waypointAllowance;
+	void Awake()
+	{
+	}
+
+	void Update () 
+	{
+		if (target != null)
+		{
+			if (Vector3.Distance (target.position, Enemy.position) <= waypointAllowance) 
+			{
+				loseScreen.SetActive (true);
+			}
+		}
+
+
+		if (EnemyHealth.playerWon) 
+		{
+			pauseMenu.enabled = false;
+			Cursor.lockState = CursorLockMode.None;
+
+			GameObject myEventSystem = GameObject.Find("EventSystem");
+			myEventSystem .GetComponent<UnityEngine.EventSystems.EventSystem>().SetSelectedGameObject(null);
+			
+		}
+			
+
+
+	}
+
+
+
+}
