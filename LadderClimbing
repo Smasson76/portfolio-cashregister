@@ -1,0 +1,88 @@
+//////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////
+//this script allows the player to climb ladders when the right conditoins ar met///////
+///////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityStandardAssets.Characters.FirstPerson;
+
+public class ClimbLadder : MonoBehaviour
+{
+	Rigidbody rb;
+
+	float climbSpeed = 10f;
+
+	public Animator panelAnim;
+
+	public bool climbing = false;
+
+	public bool canClimb = false;
+
+	FirstPersonController controller;
+
+	public float translateY;
+
+	public float translateZ;
+
+	void Awake()
+	{
+		rb = GetComponent<Rigidbody> ();
+
+		controller = GetComponent<FirstPersonController> ();
+	}
+
+	void Update()
+	{
+		if (climbing) 
+		{
+			controller.m_GravityMultiplier = 0;
+
+			rb.useGravity = false;
+		} 
+
+		else 
+		{
+			controller.m_GravityMultiplier = 2;
+			rb.useGravity = true;
+		}
+
+		if (Input.GetKeyDown (KeyCode.X) && canClimb)
+		{
+			climbing = !climbing;
+		} 
+
+
+	
+	}
+
+	void OnTriggerEnter (Collider col)
+	{
+
+		if (col.gameObject.name == "Ladder")
+		{
+			if(Input.GetAxis("Vertical") != 0)
+				ClimbTheLadder();
+		}
+	
+	}	
+	void OnTriggerStay(Collider col)
+	{
+		canClimb = true;
+		if (col.gameObject.tag == "Ladder") 
+		{
+			if (Input.GetAxis ("Vertical") != 0)
+				ClimbTheLadder ();
+		}
+	}
+
+
+	void ClimbTheLadder()
+	{
+		controller.m_MoveDir = new Vector3 (0, Input.GetAxis ("Vertical") * climbSpeed, 0);
+	}
+
+
+}
