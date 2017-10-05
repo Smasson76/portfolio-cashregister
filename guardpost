@@ -1,0 +1,29 @@
+//////////////////////dm guard pos///////////////////////
+
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class GuardScript : MonoBehaviour {
+
+    public Transform[] guardPosts;
+    public float moveSpeed;
+    private int currentPoint;
+
+	void Start () {
+        transform.position = guardPosts[0].position;
+        currentPoint = 0;
+	}
+
+	void Update () {
+        if(transform.position == guardPosts[currentPoint].position)
+        {
+            currentPoint++;
+        }
+
+        if(currentPoint > guardPosts.Length - 1)
+        {
+            currentPoint = 0;
+        }
+
+        transform.position = Vector3.MoveTowards(transform.position, guardPosts[currentPoint].position, moveSpeed * Time.deltaTime);
