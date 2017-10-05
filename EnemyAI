@@ -1,0 +1,149 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.AI;
+
+public class EnemyAI : MonoBehaviour
+{
+	public int damage = 20;
+	public float attackRange = 15;
+	public float turnSpd = 4;
+	public float timeBetweenAttacks = 0.5f;
+	public float range = 10f;
+
+	public float distance;
+	public enum State{ Patrol, Pursuing, Idle, Investigate};
+
+	NavMeshAgent agent;
+	public State startingState;
+	public State state;					//the current player state
+	public GameObject[] WP;				//a list of waypoints
+	int currentWP = 0;					//the current waypoint
+	Transform Player;					//the player transform
+	float timer;						//the timer keeping track of how long the player is distract
+	public Transform distractionPoint;	//the piont where the ai will go to when he is distracted
+	public float accuracyWP = 5f;	//how far off can he be from the target and it still considers him to have reached the target?
+	public float turnTime;			//the time it takes to turn 1 is an instant snap 0 is no turn
+	Vector3 direction;				//the direction the enemy should be moving
+	Animator anim;					//the animator compontent on the gameobject
+
+	EnemyHealth enemyHealth;
+
+	public bool defend = false; //will he stay with the target upon the distraction?
+
+	public float timeDistracted; //The time that the ai will be distracted
+
+	void Awake ()
+	{
+		//assign the references and decide the starting animation that the npc will play
+		Player = GameObject.FindGameObjectWithTag ("Player").transform;
+		agent = GetComponent<NavMeshAgent> ();
+
+		enemyHealth = GetComponent<EnemyHealth> ();
+
+		anim = GetComponent<Animator> ();
+
+		if (state == State.Idle)
+			anim.SetTrigger ("Talking");
+
+		if (state == State.Patrol && enemyHealth.target) 
+		{
+			state = State.Patrol;
+			anim.SetTrigger ("Walk");
+		}
+	}
+
+	void Update () 
+	{
+		//if there is an explosion...
+		if (ExplosionManager.Explosion) 
+		{
+			//start track the timer and run the distraction void
+			timer += Time.deltaTime;
+			Distraction ();
+		}
+		//Patrol the area
+		Patrol ();
+	}
+
+	void PatrolRoute()
+	{
+		//set the direction to the distance between the npc and it's target
+		direction = WP [currentWP].transform.position - transform.position;
+
+		//set the y to zero so the npc doesn't rotate up and down when looking at his target
+		direction.y = 0;	
+
+		//if direction has a value that is not 0
+		if(direction != Vector3.zero)
+			
+			//look at the target
+			transform.rotation = Quaternion.Slerp (this.transform.rotation, Quaternion.LookRotation(direction), turnTime);
+
+		//set the navmesh to travel to the current waypoint
+		agent.SetDestination (WP [currentWP].transform.position);
+		//if the npc has reached the waypoint
+		if (Vector3.Distance (WP [currentWP].transform.position, transform.position) < accuracyWP) 
+		{
+			//go the next waypoint
+			currentWP++;
+
+			//if there are no more waypoints left
+			if (currentWP >= WP.Length)
+
+				//go back to the beginning 
+				currentWP = 0;
+		}
+			
+	}
+
+	void Patrol()
+	{
+		//if state = patrol
+		if (state == State.Patrol && WP.Length > 0) 
+		{
+			//run the patrolroute function
+			PatrolRoute ();
+		}
+	}
+	//distraction function
+	void Distraction()
+	{
+		if (distractionPoint != null) 
+		{
+			//if he is not defending the target
+			if (!defend) {
+				//set thte state to investigate
+				state = State.Investigate;
+
+				//play the running animation
+				anim.SetTrigger ("Run");
+
+				//look at the distractin gameobject
+				transform.rotation = Quaternion.Slerp (this.transform.rotation, Quaternion.LookRotation (distractionPoint.position), turnTime);
+		
+				//if the timer is less than the time they are supposed to be distracted for
+				if (timer < timeDistracted)
+				{
+					//move toward the distraction point
+					agent.SetDestination (distractionPoint.position);
+
+					direction = distractionPoint.transform.position;
+				}
+			//otherwise if they have been distractor for the alloted time or more than
+			else if (timer >= timeDistracted)
+				{
+					//reset the timer
+					timer = 0;
+
+					//they should go back to patrolling or whatever they were doing before
+					state = startingState;
+
+					Patrol ();
+					ExplosionManager.Explosion = false;
+
+				}
+			}	
+		}
+	}
+}
