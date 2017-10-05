@@ -1,0 +1,153 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+//this script keeps track of the enemy health and carries out death and necessary functions///deadmark/////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.SceneManagement;
+using UnityStandardAssets.Characters.FirstPerson;
+public class EnemyHealth : MonoBehaviour
+{
+	FirstPersonController controller;
+	public bool target  = false; //is this enemy the target?
+
+	public float maxHealth = 100f;	//the maximum health the enemy can have
+
+	public float currentHealth;		//the current health the enemy has
+
+	public GameObject winScreen;	//the screen that will play when the player wins
+
+	public GameObject bgm;		//the background music gameobject
+
+	SaveLoadManager saveLoad;
+
+	CapsuleCollider capCol;
+	public static bool playerWon = false;
+
+	public Transform lookPoint; 
+
+	bool isDead = false;	//Boolean to see if the enemy is dead
+
+	Animator anim;	//the animator attached to the enemy
+
+	AudioSource DeathSound;	//The sound played when the enemy dies
+
+	PlayerShooting[] shooting;
+	void Awake () 
+	{
+		GetComponentsInChildren<PlayerShooting> ();
+		playerWon = false;
+		shooting = GameObject.FindGameObjectWithTag("Player").GetComponentsInChildren<PlayerShooting> (); 
+
+		SaveLoadManager.control.Save ();
+
+		//assign the references
+		anim = GetComponent<Animator>();
+
+		//set currentHealth = to maxHealth at the start of the level
+		currentHealth = maxHealth;
+
+		DeathSound = GetComponent<AudioSource> ();
+		capCol = GetComponentInChildren<CapsuleCollider> ();
+		saveLoad = GameObject.Find ("SaveLoad").GetComponent<SaveLoadManager> ();
+		controller = GameObject.FindGameObjectWithTag ("Player").GetComponent<FirstPersonController> ();
+	}
+	
+	public void TakeDamage(float damage)
+	{
+		//subtract damage from the current health
+		currentHealth -= damage;
+
+		//if the current health is less htan zero and the enemy is not dead...
+		if (currentHealth <= 0 && !isDead) 
+		{
+			//... it should die
+			Death ();
+		}
+	}
+
+	void Death()
+	{
+		if(lookPoint != null)
+		transform.LookAt (lookPoint);
+		
+		//set isdead to true
+		isDead = true;
+		 
+		if (target)
+			playerWon = true;
+		//check to see if the object has a Navmesh agent and disable it
+
+		NavMeshAgent agent = GetComponent<NavMeshAgent> ();
+
+		if (agent != null)
+			agent.enabled = false;
+		//check to see if the object has an EnemyAI script and disable it
+
+		EnemyAI enemyAI = GetComponent<EnemyAI> ();
+
+		if (enemyAI != null)
+			enemyAI.enabled = false;
+
+
+		capCol.radius = capCol.radius/2f;
+		capCol.height = capCol.height/2f;
+		//play the death animation
+		anim.SetTrigger("Dead");
+
+		//check to see if the object has a capsule collider and disable it
+		CapsuleCollider col = GetComponent<CapsuleCollider> ();
+
+
+		//check to see if the object has a Rigidbody and disable it
+
+		Rigidbody rb = GetComponent<Rigidbody> ();
+		if (rb != null)
+			rb.useGravity = false;
+		//Destroy the enemy
+		StartCoroutine (Destroy ());
+
+
+		
+	}
+	IEnumerator Destroy()
+	{
+		//delay long enough for the death animation to finish
+		yield return new WaitForSeconds (4.5f);
+		Destroy(this.gameObject);
+
+		//Destroy the gameobject
+		//if the winscreen is not active and this gameobject is the target
+		//turn on the victory screen
+		if (!winScreen.activeSelf && target) 
+		{
+			bgm.SetActive (false);
+			winScreen.SetActive (true);
+		}
+
+	
+
+
+	}
+
+	public void PlayDeathClip()
+	{
+		DeathSound.PlayOneShot (DeathSound.clip);
+	}
+
+	void Update()
+	{
+		if (playerWon) 
+		{
+			controller.enabled = false;
+			foreach (PlayerShooting p in shooting) 
+			{
+				p.enabled = false;
+			}
+			saveLoad.currentLevel =	SceneManager.GetActiveScene ().buildIndex + 1;
+		}
+	}
+}
