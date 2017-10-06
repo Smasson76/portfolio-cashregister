@@ -1,0 +1,6 @@
+number = float(input("Enter a number:"))
+
+if number >= 100 and number <= 500:
+    print("You are within the valid range")
+else:
+    print("You are not within the valid range")
