@@ -1,0 +1,10 @@
+blue = float(input("Enter the number of blue binders: "))
+white = float(input("Enter the number of white binders: "))
+black = float(input("Enter the number of black binders: "))
+total = blue + white + black
+pctblue =  blue / total * 100
+pctwhite = white / total * 100
+pctblack = black / total * 100
+print ("The percentage of blue binders is " '%.2f' % (pctblue) + "%")
+print ("The percentage of white binders is " '%.2f' % (pctwhite) + "%")
+print ("The percentage of black binders  is "'%.2f' % (pctblack) + "%")
