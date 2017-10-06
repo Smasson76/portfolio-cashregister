@@ -1,0 +1,3 @@
+squarefeet = float(input("Enter the square feet:  "))
+acres = squarefeet / 43560
+print("The acres equal to: ", acres)
