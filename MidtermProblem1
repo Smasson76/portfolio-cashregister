@@ -1,0 +1,5 @@
+bill = float(input("Enter amount of bill: "))
+
+print ("The 15 percent tip amount is $" '%.2f' % (bill * .15))
+print ("The 18 percent tip amount is $" '%.2f' % (bill * .18))
+print ("The 20 percent tip amount is $" '%.2f' % (bill * .20))
