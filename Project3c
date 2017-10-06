@@ -1,0 +1,9 @@
+horse1 = float(input("How many seconds did Horse 1 finish the race in: "))
+horse2 = float(input("How many seconds did Horse 2 finish the race in: "))
+horse3 = float(input("How many seconds did Horse 1 finish the race in: "))
+if horse1 < horse2 and horse1 < horse3:
+    print ("Horse 1 won the race")
+if horse2 < horse1 and horse2 < horse3:
+    print ("Horse 2 won the race")
+if horse3 < horse1 and horse3 < horse2:
+    print ("Horse 3 won the race")
