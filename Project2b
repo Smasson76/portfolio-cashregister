@@ -1,0 +1,6 @@
+p = float (input("Enter a purchase amount: "))
+state = p * .05
+county = p * .025
+print ("Your state tax is: $", state)
+print ("Your county tax is: $", county)
+print ("Your total amoutn is $", p + county + state)
